@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Spam Detection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Global styles for a vibrant look */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6A11CB, #2575FC); /* Colorful gradient background */
+            color: white;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Container for the form */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 2s;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 2.2em;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(45deg, #6A11CB, #2575FC);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #2575FC, #6A11CB);
+            transform: scale(1.05);
+        }
+
+        .result-message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            animation: fadeIn 1.5s;
+        }
+
+        /* Adding animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>SMS Spam Detection</h2>
+        <form id="spamForm">
+            <input type="text" id="message" placeholder="Type your message here..." required>
+            <button type="submit">Check Spam</button>
+        </form>
+        <div id="result" class="result-message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('spamForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('message').value;
+
+            // Simulate server response
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message }),
+            });
+
+            const data = await response.json();
+
+            // Change the background dynamically based on prediction
+            if (data.error) {
+                resultDiv.textContent = `Error: ${data.error}`;
+                document.body.style.background = 'linear-gradient(135deg, #FF4D4D, #FF6A6A)';
+            } else {
+                resultDiv.textContent = `Prediction: ${data.prediction}`;
+                if (data.prediction === 'Spam') {
+                    document.body.style.background = 'linear-gradient(135deg, #FF4D4D, #FF6A6A)';
+                    resultDiv.style.color = '#FF4D4D';
+                } else {
+                    document.body.style.background = 'linear-gradient(135deg, #4CAF50, #81C784)';
+                    resultDiv.style.color = '#4CAF50';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
